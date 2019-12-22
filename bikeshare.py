@@ -28,6 +28,8 @@ def get_filters():
             input('Select a city from Chicago, New York City and Washington. \n')).lower()
         if city not in cities:
             print('Please enter a valid city name')
+        elif city == washington:
+            print('Washington has insufficient User data')
         else:
             break
 
@@ -184,6 +186,7 @@ def user_stats(df):
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-' * 40)
+
 
 
 def view_data(df):
