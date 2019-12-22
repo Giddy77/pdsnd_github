@@ -28,6 +28,8 @@ def get_filters():
             input('Select any city from Chicago, New York City and Washington. \n')).lower()
         if city not in cities:
             print('Please enter a valid city name')
+        elif city == washington:
+            print('Washington has insufficient User data')
         else:
             break
 
@@ -186,19 +188,67 @@ def user_stats(df):
     print('-' * 40)
 
 
-def view_data(df):
-    start = 0
-    choice = input('\nDo you want to view the data? Enter yes or no.\n')
-    while choice == 'yes':
-        try:
-            n = int(input('Enter the number of rows to view\n'))
-            n = start + n
-            print(df[start:n])
-            choice = input('More rows? Enter yes or no.\n')
-            start = n
 
-        except ValueError:
-            print('Enter appropriate integer value')
+def raw_data(df, mark_place):
+    """Display 5 line of sorted raw data each time."""
+
+    print("\nYou opted to view raw data.")
+
+    # this variable holds where the user last stopped
+    if mark_place > 0:
+        last_place = choice("\nWould you like to continue from where you "
+                            "stopped last time? \n [y] Yes\n [n] No\n\n>")
+        if last_place == 'n':
+            mark_place = 0
+
+    # sort data by column
+    if mark_place == 0:
+        sort_df = choice("\nHow would you like to sort the way the data is "
+                         "displayed in the dataframe? Hit Enter to view "
+                         "unsorted.\n \n [st] Start Time\n [et] End Time\n "
+                         "[td] Trip Duration\n [ss] Start Station\n "
+                         "[es] End Station\n\n>",
+                         ('st', 'et', 'td', 'ss', 'es', ''))
+
+        asc_or_desc = choice("\nWould you like it to be sorted ascending or "
+                             "descending? \n [a] Ascending\n [d] Descending"
+                             "\n\n>",
+                             ('a', 'd'))
+
+        if asc_or_desc == 'a':
+            asc_or_desc = True
+        elif asc_or_desc == 'd':
+            asc_or_desc = False
+
+        if sort_df == 'st':
+            df = df.sort_values(['Start Time'], ascending=asc_or_desc)
+        elif sort_df == 'et':
+            df = df.sort_values(['End Time'], ascending=asc_or_desc)
+        elif sort_df == 'td':
+            df = df.sort_values(['Trip Duration'], ascending=asc_or_desc)
+        elif sort_df == 'ss':
+            df = df.sort_values(['Start Station'], ascending=asc_or_desc)
+        elif sort_df == 'es':
+            df = df.sort_values(['End Station'], ascending=asc_or_desc)
+        elif sort_df == '':
+            pass
+
+    # each loop displays 5 lines of raw data
+    while True:
+        for i in range(mark_place, len(df.index)):
+            print("\n")
+            print(df.iloc[mark_place:mark_place+5].to_string())
+            print("\n")
+            mark_place += 5
+
+            if choice("Do you want to keep printing raw data?"
+                      "\n\n[y]Yes\n[n]No\n\n>") == 'y':
+                continue
+            else:
+                break
+        break
+
+    return mark_place
 
 
 def main():
